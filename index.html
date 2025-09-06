@@ -3,68 +3,900 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BMI Calculator</title>
+    <meta name="description" content="Professional BMI Calculator with calorie and protein tracking. Get personalized health advice based on your body metrics.">
+    <meta name="keywords" content="BMI calculator, body mass index, calorie calculator, protein calculator, health tracker, fitness, weight management">
+    <meta name="author" content="Health Metrics Calculator">
+    <title>Professional BMI & Health Calculator | Track Your Fitness Journey</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f0f8ff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --underweight-color: #3498db;
+            --normal-color: #2ecc71;
+            --overweight-color: #f39c12;
+            --obese1-color: #e67e22;
+            --obese2-color: #d35400;
+            --obese3-color: #c0392b;
         }
-        .result {
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
             background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
             padding: 20px 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
             text-align: center;
         }
-        h1 {
-            color: #333;
+        
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 5px;
         }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .tabs {
+            display: flex;
+            background-color: #f1f1f1;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #f1f1f1;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .tab:hover {
+            background-color: #e1e1e1;
+        }
+        
+        .tab.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .tab i {
+            margin-left: 8px;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+        
+        .unit-toggle {
+            display: flex;
+            margin-bottom: 20px;
+            background-color: #f1f1f1;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .unit-option {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .unit-option.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+        
+        .results-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .result-card {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border-right: 5px solid var(--primary-color);
+        }
+        
+        .result-card h3 {
+            margin-bottom: 15px;
+            color: var(--dark-color);
+            font-size: 1.2rem;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 10px 0;
+        }
+        
         .status {
-            font-weight: bold;
-            color: #0077cc;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 30px;
+            display: inline-block;
             margin-top: 10px;
+        }
+        
+        .status-underweight { background-color: #e3f2fd; color: var(--underweight-color); }
+        .status-normal { background-color: #e8f5e9; color: var(--normal-color); }
+        .status-overweight { background-color: #fff8e1; color: var(--overweight-color); }
+        .status-obese1 { background-color: #fbeee6; color: var(--obese1-color); }
+        .status-obese2 { background-color: #f9e4d7; color: var(--obese2-color); }
+        .status-obese3 { background-color: #f9d6d0; color: var(--obese3-color); }
+        
+        .advice-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-right: 5px solid var(--warning-color);
+        }
+        
+        .advice-card h3 {
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .advice-card h3 i {
+            margin-left: 10px;
+            color: var(--warning-color);
+        }
+        
+        .advice-card ul {
+            padding-right: 20px;
+            margin-top: 10px;
+        }
+        
+        .advice-card li {
+            margin-bottom: 8px;
+        }
+        
+        .bmi-scale {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .bmi-scale h3 {
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .scale-container {
+            display: flex;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .scale-segment {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .scale-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .info-section {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .info-section h3 {
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .info-section h3 i {
+            margin-left: 10px;
+            color: var(--primary-color);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .info-item {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .info-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .info-item p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .tab {
+                padding: 12px 8px;
+                font-size: 0.9rem;
+            }
+            
+            .tab i {
+                display: none;
+            }
+            
+            .metric-value {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
 <body>
-
-    <div class="result" id="output">
-        <h1>BMI Calculator</h1>
-        <p>Check the console if input prompts don't appear</p>
+    <div class="container">
+        <header>
+            <h1>Professional Health Calculator</h1>
+            <p>Track your BMI, calories, protein needs, and get personalized health advice</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="openTab(event, 'bmi-tab')"><i class="fas fa-weight"></i> BMI Calculator</button>
+            <button class="tab" onclick="openTab(event, 'calories-tab')"><i class="fas fa-fire"></i> Calories & Protein</button>
+            <button class="tab" onclick="openTab(event, 'advice-tab')"><i class="fas fa-heartbeat"></i> Health Advice</button>
+        </div>
+        
+        <div id="bmi-tab" class="tab-content active">
+            <div class="unit-toggle">
+                <div class="unit-option active" onclick="toggleUnits('metric')">Metric (kg, cm)</div>
+                <div class="unit-option" onclick="toggleUnits('imperial')">Imperial (lbs, ft/in)</div>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="weight">Weight:</label>
+                    <input type="number" id="weight" placeholder="Enter your weight">
+                    <span id="weight-unit">kg</span>
+                </div>
+                
+                <div class="form-group">
+                    <label for="height">Height:</label>
+                    <input type="number" id="height" placeholder="Enter your height">
+                    <span id="height-unit">cm</span>
+                </div>
+            </div>
+            
+            <button class="btn btn-block" onclick="calculateBMI()">Calculate BMI</button>
+            
+            <div id="bmi-results" class="results-container hidden">
+                <div class="result-card">
+                    <h3>Your BMI Results</h3>
+                    <div class="metric-value" id="bmi-value">--</div>
+                    <div class="status" id="bmi-status">--</div>
+                </div>
+                
+                <div class="result-card">
+                    <h3>Body Fat Category</h3>
+                    <div class="metric-value" id="body-fat-category">--</div>
+                    <p id="body-fat-description">--</p>
+                </div>
+            </div>
+            
+            <div class="bmi-scale">
+                <h3>BMI Classification Scale</h3>
+                <div class="scale-container">
+                    <div class="scale-segment" style="background-color: var(--underweight-color);">Underweight</div>
+                    <div class="scale-segment" style="background-color: var(--normal-color);">Normal</div>
+                    <div class="scale-segment" style="background-color: var(--overweight-color);">Overweight</div>
+                    <div class="scale-segment" style="background-color: var(--obese1-color);">Obese</div>
+                </div>
+                <div class="scale-labels">
+                    <span>&lt; 18.5</span>
+                    <span>18.5 - 24.9</span>
+                    <span>25 - 29.9</span>
+                    <span>&gt; 30</span>
+                </div>
+            </div>
+        </div>
+        
+        <div id="calories-tab" class="tab-content">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="cal-weight">Weight (kg):</label>
+                    <input type="number" id="cal-weight" placeholder="Enter your weight">
+                </div>
+                
+                <div class="form-group">
+                    <label for="cal-height">Height (cm):</label>
+                    <input type="number" id="cal-height" placeholder="Enter your height">
+                </div>
+                
+                <div class="form-group">
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" placeholder="Enter your age">
+                </div>
+                
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <select id="gender">
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="activity">Activity Level:</label>
+                    <select id="activity">
+                        <option value="1.2">Sedentary (little or no exercise)</option>
+                        <option value="1.375">Light (exercise 1-3 days/week)</option>
+                        <option value="1.55">Moderate (exercise 3-5 days/week)</option>
+                        <option value="1.725">Active (exercise 6-7 days/week)</option>
+                        <option value="1.9">Very Active (hard exercise daily)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="goal">Health Goal:</label>
+                    <select id="goal">
+                        <option value="maintain">Maintain Weight</option>
+                        <option value="lose">Lose Weight</option>
+                        <option value="gain">Gain Weight</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button class="btn btn-block" onclick="calculateCalories()">Calculate Calories & Protein</button>
+            
+            <div id="calories-results" class="results-container hidden">
+                <div class="result-card">
+                    <h3>Daily Calorie Needs</h3>
+                    <div class="metric-value" id="calories-value">--</div>
+                    <p>calories per day</p>
+                </div>
+                
+                <div class="result-card">
+                    <h3>Protein Requirements</h3>
+                    <div class="metric-value" id="protein-value">--</div>
+                    <p>grams per day</p>
+                </div>
+                
+                <div class="result-card">
+                    <h3>Macronutrient Distribution</h3>
+                    <div id="macro-distribution">
+                        <p>Protein: <span id="protein-percent">--</span>%</p>
+                        <p>Carbs: <span id="carbs-percent">--</span>%</p>
+                        <p>Fat: <span id="fat-percent">--</span>%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="advice-tab" class="tab-content">
+            <div class="form-group">
+                <label for="advice-weight">Weight (kg):</label>
+                <input type="number" id="advice-weight" placeholder="Enter your weight">
+            </div>
+            
+            <div class="form-group">
+                <label for="advice-height">Height (cm):</label>
+                <input type="number" id="advice-height" placeholder="Enter your height">
+            </div>
+            
+            <button class="btn btn-block" onclick="generateAdvice()">Get Personalized Advice</button>
+            
+            <div id="advice-results" class="hidden">
+                <div class="advice-card" id="weight-advice">
+                    <h3><i class="fas fa-weight"></i> Weight Management Advice</h3>
+                    <ul id="weight-advice-list"></ul>
+                </div>
+                
+                <div class="advice-card" id="exercise-advice">
+                    <h3><i class="fas fa-running"></i> Exercise Recommendations</h3>
+                    <ul id="exercise-advice-list"></ul>
+                </div>
+                
+                <div class="advice-card" id="nutrition-advice">
+                    <h3><i class="fas fa-apple-alt"></i> Nutrition Guidelines</h3>
+                    <ul id="nutrition-advice-list"></ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="info-section">
+            <h3><i class="fas fa-info-circle"></i> About This Calculator</h3>
+            <p>This professional health calculator provides accurate BMI calculations, calorie needs, and personalized health advice based on scientific formulas. It's designed for adults and is not suitable for children or professional athletes.</p>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <h4>BMI Formula</h4>
+                    <p>BMI = weight (kg) / [height (m)]²</p>
+                </div>
+                
+                <div class="info-item">
+                    <h4>Calorie Formula</h4>
+                    <p>Mifflin-St Jeor Equation</p>
+                </div>
+                
+                <div class="info-item">
+                    <h4>Protein Needs</h4>
+                    <p>1.6-2.2g per kg of body weight</p>
+                </div>
+                
+                <div class="info-item">
+                    <h4>Accuracy</h4>
+                    <p>For general reference purposes only</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        var n1 = parseFloat(prompt("Enter your weight in kg:"));
-        var n2 = parseFloat(prompt("Enter your height in meters:"));
-
-        var bmi = n1 / (n2 * n2);
-
-        var status = "";
-
-        if (bmi < 18.5) {
-            status = "Underweight";
-        } else if (bmi >= 18.5 && bmi < 25) {
-            status = "Normal weight";
-        } else if (bmi >= 25 && bmi < 30) {
-            status = "Overweight";
-        } else if (bmi >= 30 && bmi < 35) {
-            status = "Obese (Class 1)";
-        } else if (bmi >= 35 && bmi < 40) {
-            status = "Obese (Class 2)";
-        } else {
-            status = "Morbidly Obese (Class 3)";
+        let currentUnit = 'metric';
+        
+        function openTab(evt, tabName) {
+            let i, tabcontent, tabs;
+            
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            
+            tabs = document.getElementsByClassName("tab");
+            for (i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
         }
-
-        document.getElementById("output").innerHTML += `
-            <p>Your BMI is: <strong>${bmi.toFixed(2)}</strong></p>
-            <p class="status">Status: ${status}</p>
-        `;
+        
+        function toggleUnits(unit) {
+            currentUnit = unit;
+            const unitOptions = document.querySelectorAll('.unit-option');
+            
+            unitOptions.forEach(option => {
+                option.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+            
+            if (unit === 'metric') {
+                document.getElementById('weight-unit').textContent = 'kg';
+                document.getElementById('height-unit').textContent = 'cm';
+                document.getElementById('weight').placeholder = 'Enter your weight in kg';
+                document.getElementById('height').placeholder = 'Enter your height in cm';
+            } else {
+                document.getElementById('weight-unit').textContent = 'lbs';
+                document.getElementById('height-unit').textContent = 'ft/in';
+                document.getElementById('weight').placeholder = 'Enter your weight in lbs';
+                document.getElementById('height').placeholder = 'Enter your height in ft/in';
+            }
+        }
+        
+        function calculateBMI() {
+            let weight = parseFloat(document.getElementById('weight').value);
+            let height = parseFloat(document.getElementById('height').value);
+            
+            if (isNaN(weight) || isNaN(height) || weight <= 0 || height <= 0) {
+                alert('Please enter valid weight and height values');
+                return;
+            }
+            
+            // Convert to metric if needed
+            if (currentUnit === 'imperial') {
+                // Convert lbs to kg
+                weight = weight * 0.453592;
+                
+                // Convert ft/in to meters (assuming height is in inches)
+                height = height * 0.0254;
+            } else {
+                // Convert cm to meters
+                height = height / 100;
+            }
+            
+            const bmi = weight / (height * height);
+            let status = "";
+            let statusClass = "";
+            let bodyFatCategory = "";
+            let bodyFatDescription = "";
+            
+            if (bmi < 18.5) {
+                status = "Underweight";
+                statusClass = "status-underweight";
+                bodyFatCategory = "Low Body Fat";
+                bodyFatDescription = "You have less body fat than is considered healthy.";
+            } else if (bmi >= 18.5 && bmi < 25) {
+                status = "Normal Weight";
+                statusClass = "status-normal";
+                bodyFatCategory = "Healthy Body Fat";
+                bodyFatDescription = "You have a healthy amount of body fat for your height.";
+            } else if (bmi >= 25 && bmi < 30) {
+                status = "Overweight";
+                statusClass = "status-overweight";
+                bodyFatCategory = "Excess Body Fat";
+                bodyFatDescription = "You have more body fat than is considered healthy.";
+            } else if (bmi >= 30 && bmi < 35) {
+                status = "Obese (Class 1)";
+                statusClass = "status-obese1";
+                bodyFatCategory = "High Body Fat";
+                bodyFatDescription = "You have significantly more body fat than is considered healthy.";
+            } else if (bmi >= 35 && bmi < 40) {
+                status = "Obese (Class 2)";
+                statusClass = "status-obese2";
+                bodyFatCategory = "Very High Body Fat";
+                bodyFatDescription = "You have very high body fat levels that may impact your health.";
+            } else {
+                status = "Morbidly Obese (Class 3)";
+                statusClass = "status-obese3";
+                bodyFatCategory = "Dangerously High Body Fat";
+                bodyFatDescription = "You have dangerously high body fat levels that require medical attention.";
+            }
+            
+            document.getElementById('bmi-value').textContent = bmi.toFixed(2);
+            document.getElementById('bmi-status').textContent = status;
+            document.getElementById('bmi-status').className = "status " + statusClass;
+            document.getElementById('body-fat-category').textContent = bodyFatCategory;
+            document.getElementById('body-fat-description').textContent = bodyFatDescription;
+            
+            document.getElementById('bmi-results').classList.remove('hidden');
+        }
+        
+        function calculateCalories() {
+            const weight = parseFloat(document.getElementById('cal-weight').value);
+            const height = parseFloat(document.getElementById('cal-height').value);
+            const age = parseFloat(document.getElementById('age').value);
+            const gender = document.getElementById('gender').value;
+            const activity = parseFloat(document.getElementById('activity').value);
+            const goal = document.getElementById('goal').value;
+            
+            if (isNaN(weight) || isNaN(height) || isNaN(age) || weight <= 0 || height <= 0 || age <= 0) {
+                alert('Please enter valid weight, height, and age values');
+                return;
+            }
+            
+            // Calculate BMR using Mifflin-St Jeor Equation
+            let bmr;
+            if (gender === 'male') {
+                bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+            } else {
+                bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+            }
+            
+            // Calculate total daily calorie needs
+            let calories = bmr * activity;
+            
+            // Adjust calories based on goal
+            if (goal === 'lose') {
+                calories -= 500; // Deficit of 500 calories per day for ~1 lb weight loss per week
+            } else if (goal === 'gain') {
+                calories += 500; // Surplus of 500 calories per day for ~1 lb weight gain per week
+            }
+            
+            // Calculate protein needs (1.6-2.2g per kg of body weight)
+            const protein = weight * 1.8; // Using average of the range
+            
+            // Calculate macronutrient distribution
+            const proteinCalories = protein * 4; // 4 calories per gram of protein
+            const fatCalories = calories * 0.25; // 25% of calories from fat
+            const fat = fatCalories / 9; // 9 calories per gram of fat
+            const carbsCalories = calories - proteinCalories - fatCalories;
+            const carbs = carbsCalories / 4; // 4 calories per gram of carbs
+            
+            const proteinPercent = Math.round((proteinCalories / calories) * 100);
+            const fatPercent = Math.round((fatCalories / calories) * 100);
+            const carbsPercent = Math.round((carbsCalories / calories) * 100);
+            
+            document.getElementById('calories-value').textContent = Math.round(calories);
+            document.getElementById('protein-value').textContent = Math.round(protein);
+            document.getElementById('protein-percent').textContent = proteinPercent;
+            document.getElementById('carbs-percent').textContent = carbsPercent;
+            document.getElementById('fat-percent').textContent = fatPercent;
+            
+            document.getElementById('calories-results').classList.remove('hidden');
+        }
+        
+        function generateAdvice() {
+            const weight = parseFloat(document.getElementById('advice-weight').value);
+            const height = parseFloat(document.getElementById('advice-height').value);
+            
+            if (isNaN(weight) || isNaN(height) || weight <= 0 || height <= 0) {
+                alert('Please enter valid weight and height values');
+                return;
+            }
+            
+            // Convert height to meters
+            const heightInMeters = height / 100;
+            
+            // Calculate BMI
+            const bmi = weight / (heightInMeters * heightInMeters);
+            
+            // Clear previous advice
+            document.getElementById('weight-advice-list').innerHTML = '';
+            document.getElementById('exercise-advice-list').innerHTML = '';
+            document.getElementById('nutrition-advice-list').innerHTML = '';
+            
+            // Generate advice based on BMI
+            let weightAdvice = [];
+            let exerciseAdvice = [];
+            let nutritionAdvice = [];
+            
+            if (bmi < 18.5) {
+                weightAdvice = [
+                    "Focus on gaining weight in a healthy manner",
+                    "Aim for a calorie surplus of 300-500 calories per day",
+                    "Increase protein intake to build muscle mass",
+                    "Consider consulting with a healthcare provider or dietitian"
+                ];
+                
+                exerciseAdvice = [
+                    "Focus on strength training exercises to build muscle",
+                    "Limit excessive cardio that burns too many calories",
+                    "Aim for 3-4 strength training sessions per week",
+                    "Consider compound exercises like squats, deadlifts, and bench presses"
+                ];
+                
+                nutritionAdvice = [
+                    "Eat nutrient-dense foods high in protein and healthy fats",
+                    "Include complex carbohydrates like whole grains and starchy vegetables",
+                    "Consider adding healthy snacks between meals",
+                    "Stay hydrated and consider nutritional shakes if needed"
+                ];
+            } else if (bmi >= 18.5 && bmi < 25) {
+                weightAdvice = [
+                    "Maintain your current healthy weight",
+                    "Focus on a balanced diet and regular exercise",
+                    "Monitor your weight regularly to catch any changes early",
+                    "Continue healthy lifestyle habits for long-term wellness"
+                ];
+                
+                exerciseAdvice = [
+                    "Maintain a balanced exercise routine with both cardio and strength training",
+                    "Aim for at least 150 minutes of moderate-intensity activity per week",
+                    "Include flexibility and mobility exercises",
+                    "Find physical activities you enjoy for long-term adherence"
+                ];
+                
+                nutritionAdvice = [
+                    "Follow a balanced diet with appropriate portion sizes",
+                    "Include a variety of fruits, vegetables, lean proteins, and whole grains",
+                    "Limit processed foods and added sugars",
+                    "Stay hydrated and be mindful of your calorie needs"
+                ];
+            } else if (bmi >= 25 && bmi < 30) {
+                weightAdvice = [
+                    "Focus on gradual weight loss of 1-2 pounds per week",
+                    "Create a modest calorie deficit of 300-500 calories per day",
+                    "Set realistic short-term and long-term weight goals",
+                    "Monitor your progress regularly and adjust as needed"
+                ];
+                
+                exerciseAdvice = [
+                    "Increase physical activity to at least 200 minutes per week",
+                    "Include both cardio and strength training exercises",
+                    "Start with low-impact activities if you're new to exercise",
+                    "Consider working with a fitness professional for guidance"
+                ];
+                
+                nutritionAdvice = [
+                    "Focus on portion control and reducing calorie-dense foods",
+                    "Increase intake of fruits, vegetables, and lean proteins",
+                    "Limit sugary beverages and processed foods",
+                    "Keep a food diary to increase awareness of eating habits"
+                ];
+            } else {
+                weightAdvice = [
+                    "Consult with a healthcare provider before starting a weight loss plan",
+                    "Set realistic long-term weight loss goals",
+                    "Focus on gradual weight loss of 1-2 pounds per week",
+                    "Consider medical interventions if recommended by your doctor"
+                ];
+                
+                exerciseAdvice = [
+                    "Start with low-impact activities like walking or swimming",
+                    "Gradually increase duration and intensity of exercise",
+                    "Consider working with a physical therapist or trainer",
+                    "Focus on consistency rather than intensity at the beginning"
+                ];
+                
+                nutritionAdvice = [
+                    "Work with a registered dietitian for a personalized meal plan",
+                    "Focus on nutrient-dense, lower-calorie foods",
+                    "Practice mindful eating and portion control",
+                    "Address any emotional eating patterns with professional help"
+                ];
+            }
+            
+            // Add advice to the DOM
+            weightAdvice.forEach(advice => {
+                const li = document.createElement('li');
+                li.textContent = advice;
+                document.getElementById('weight-advice-list').appendChild(li);
+            });
+            
+            exerciseAdvice.forEach(advice => {
+                const li = document.createElement('li');
+                li.textContent = advice;
+                document.getElementById('exercise-advice-list').appendChild(li);
+            });
+            
+            nutritionAdvice.forEach(advice => {
+                const li = document.createElement('li');
+                li.textContent = advice;
+                document.getElementById('nutrition-advice-list').appendChild(li);
+            });
+            
+            document.getElementById('advice-results').classList.remove('hidden');
+        }
+        
+        // Add event listeners for Enter key
+        document.getElementById('weight').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateBMI();
+            }
+        });
+        
+        document.getElementById('height').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateBMI();
+            }
+        });
+        
+        document.getElementById('cal-weight').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateCalories();
+            }
+        });
+        
+        document.getElementById('cal-height').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateCalories();
+            }
+        });
+        
+        document.getElementById('age').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateCalories();
+            }
+        });
+        
+        document.getElementById('advice-weight').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateAdvice();
+            }
+        });
+        
+        document.getElementById('advice-height').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                generateAdvice();
+            }
+        });
     </script>
-
 </body>
 </html>
+
